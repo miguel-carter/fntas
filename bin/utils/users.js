@@ -33,12 +33,7 @@ function list (cb) {
     })
 }
 
-function remove () {
-
-}
-
 module.exports = {
     list,
-    add,
-    remove
+    add
 }
