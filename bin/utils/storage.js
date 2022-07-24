@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { resolve } = require('path');
 const path = require('path');
 
 const required = [
@@ -60,41 +61,36 @@ function initialize () {
     }
 }
 
-function getFile (path, cb) {
-    fs.readFile(path, 'utf-8', (error, data) => {
-        if (error) throw error;
-        const temp = data.toString();
-        const parsed = JSON.parse(temp);
-        cb(parsed);
-    });
+
+function getFile(path) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(path, 'utf-8', (error, data) => {
+            if (error) reject(error);
+            resolve(data);
+        })
+    })
 }
 
 function setFile(path, data) {
-    fs.writeFile(path, JSON.stringify(data), 'utf-8', (error) => {
-        if (error) throw error;
-    });
-}
+    return new Promise((resolve, reject) => {
+        fs.writeFile(path, JSON.stringify(data), 'utf-8', (error) => {
+            if (error) reject(error);
+            resolve();
+        });
 
-const Users = {
-    get(cb) {
-        getFile(users.path, cb);
-    },
-    set(data) {
-        setFile(users.path, data);
-    },
+    })
 }
 
 const Projects = {
-    get(cb) {
-        getFile(projects.path, cb);
+    get() {
+        return getFile(projects.path);
     },
     set(data) {
-        setFile(projects.path, data);
+        return setFile(projects.path, data);
     }
 }
 
 module.exports = {
     initialize,
-    Users,
     Projects
 };
